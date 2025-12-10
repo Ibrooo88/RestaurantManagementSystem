@@ -3,9 +3,9 @@ project(RestaurantManagementSystem)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Find Qt5
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Gui)
 
 # Find SQLite3 (optional - not needed in simulation mode)
 find_package(SQLite3)
@@ -190,7 +190,9 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${MOC_SOURCES})
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Widgets
+    Qt5::Gui
 )
+
 
 # Link SQLite3 if found
 if(SQLite3_FOUND)
