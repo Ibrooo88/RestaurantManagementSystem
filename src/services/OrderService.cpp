@@ -22,7 +22,7 @@ Order* OrderService::createOrder(int tableId, const std::string& customerName,
     Order* order = new Order();
     order->setOrderNumber(orderNumber);
     order->setTableId(tableId);
-    order->setOrderType(OrderType::DINE_IN);
+    order->setOrderType(OrderType::NORMAL);
     order->setStatus(OrderStatus::PENDING);
     order->setCustomerName(customerName);
     

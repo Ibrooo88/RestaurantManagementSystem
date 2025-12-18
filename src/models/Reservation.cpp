@@ -1,7 +1,7 @@
 #include "../../include/models/Reservation.h"
 
 Reservation::Reservation() : id(0), tableId(0), numberOfGuests(0),
-                            status(ReservationStatus::PENDING) {}
+                            status(ReservationStatus::PENDING), orderId(0) {}
 
 Reservation::Reservation(int id, const std::string& customerName, int tableId,
                          const std::string& reservationDate, const std::string& reservationTime,
@@ -19,6 +19,7 @@ std::string Reservation::getReservationTime() const { return reservationTime; }
 int Reservation::getNumberOfGuests() const { return numberOfGuests; }
 ReservationStatus Reservation::getStatus() const { return status; }
 std::string Reservation::getSpecialRequests() const { return specialRequests; }
+int Reservation::getOrderId() const { return orderId; }
 std::string Reservation::getCreatedAt() const { return createdAt; }
 std::string Reservation::getUpdatedAt() const { return updatedAt; }
 
@@ -32,6 +33,7 @@ void Reservation::setReservationTime(const std::string& reservationTime) { this-
 void Reservation::setNumberOfGuests(int numberOfGuests) { this->numberOfGuests = numberOfGuests; }
 void Reservation::setStatus(ReservationStatus status) { this->status = status; }
 void Reservation::setSpecialRequests(const std::string& specialRequests) { this->specialRequests = specialRequests; }
+void Reservation::setOrderId(int orderId) { this->orderId = orderId; }
 void Reservation::setCreatedAt(const std::string& createdAt) { this->createdAt = createdAt; }
 void Reservation::setUpdatedAt(const std::string& updatedAt) { this->updatedAt = updatedAt; }
 

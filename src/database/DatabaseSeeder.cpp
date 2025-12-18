@@ -1,5 +1,6 @@
 #include "../../include/database/DatabaseSeeder.h"
 #include "../../include/database/DatabaseConnection.h"
+#include "../../include/database/DatabaseMigration.h"
 #include "../../include/repositories/RoleRepository.h"
 #include "../../include/repositories/PermissionRepository.h"
 #include "../../include/repositories/AccessScopeRepository.h"
@@ -197,7 +198,7 @@ bool DatabaseSeeder::seedChefs() {
         
         Chef* chef = new Chef();
         chef->setUserId(user->getId());
-        chef->setChefType(ChefType::HEAD_CHEF);
+        chef->setChefType(ChefType::VIP_CHEF);
         chef->setStatus(ChefStatus::AVAILABLE);
         chef->setSkillLevel(5);
         chef->setCurrentWorkload(0);

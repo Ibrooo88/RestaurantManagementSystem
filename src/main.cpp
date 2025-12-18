@@ -4,6 +4,7 @@
 #include "../include/gui/MainWindow.h"
 #include "../include/database/DatabaseConnection.h"
 #include "../include/database/DatabaseMigration.h"
+#include "../include/database/DatabaseSeeder.h"
 #include "../include/utils/Logger.h"
 #include "../include/utils/SimulationMode.h"
 #include <iostream>
@@ -40,6 +41,9 @@ int main(int argc, char *argv[]) {
             Logger::getInstance().error("Database migration failed!");
             return -1;
         }
+        
+        // Seed default data
+        DatabaseSeeder::seed();
     }
     
     // Show login window

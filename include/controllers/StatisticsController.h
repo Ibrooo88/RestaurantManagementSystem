@@ -3,17 +3,7 @@
 
 #include <string>
 #include <map>
-
-struct StatisticsData {
-    int totalOrders;
-    double totalRevenue;
-    int completedOrders;
-    double averageOrderValue;
-    int activeTables;
-    int pendingOrders;
-    std::map<std::string, int> ordersByStatus;
-    std::map<std::string, double> revenueByDate;
-};
+#include "../services/StatisticsService.h"
 
 class StatisticsController {
 public:

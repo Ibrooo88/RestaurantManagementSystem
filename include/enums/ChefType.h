@@ -2,12 +2,9 @@
 #define CHEFTYPE_H
 
 enum class ChefType {
-    HEAD_CHEF,
-    SOUS_CHEF,
-    LINE_CHEF,
-    PASTRY_CHEF,
-    GRILL_CHEF
+    NORMAL_CHEF,    // Standard chef for normal orders
+    VEGAN_CHEF,     // Specialized in plant-based food - serves only vegan orders
+    VIP_CHEF        // Highly skilled - can prepare any order type, but primarily VIP
 };
 
 #endif // CHEFTYPE_H
-

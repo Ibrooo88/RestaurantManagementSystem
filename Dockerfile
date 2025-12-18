@@ -1,6 +1,11 @@
 ﻿FROM ubuntu:22.04
 
-RUN apt-get update && apt-get install -y \
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+RUN apt-get update && \
+    apt-get install -y \
+    tzdata \
     build-essential \
     cmake \
     ninja-build \
@@ -11,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     qttools5-dev-tools \
     libsqlite3-dev \
     git \
-    && apt-get clean
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

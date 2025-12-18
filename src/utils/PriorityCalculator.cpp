@@ -1,5 +1,5 @@
 #include "../../include/utils/PriorityCalculator.h"
-#include "../enums/OrderType.h"
+#include "../../include/enums/OrderType.h"
 
 int PriorityCalculator::calculateOrderPriority(
     OrderType orderType,
@@ -11,14 +11,14 @@ int PriorityCalculator::calculateOrderPriority(
     
     // Base priority by order type
     switch (orderType) {
-        case OrderType::DINE_IN:
+        case OrderType::VIP:
+            priority = 100;  // Highest priority
+            break;
+        case OrderType::VEGAN:
             priority = 50;
             break;
-        case OrderType::TAKEAWAY:
+        case OrderType::NORMAL:
             priority = 30;
-            break;
-        case OrderType::DELIVERY:
-            priority = 40;
             break;
     }
     
@@ -28,7 +28,7 @@ int PriorityCalculator::calculateOrderPriority(
     // Number of items factor (fewer items = slightly higher priority)
     priority += (10 - numberOfItems);
     
-    // VIP factor
+    // VIP factor (additional boost if flagged)
     if (isVIP) {
         priority += 20;
     }
@@ -40,4 +40,3 @@ int PriorityCalculator::calculateChefPriority(int currentWorkload, int skillLeve
     // Lower workload and higher skill = higher priority
     return (100 - currentWorkload) + (skillLevel * 10);
 }
-

@@ -1,13 +1,16 @@
 #include "../../include/gui/ReservationView.h"
 #include "../../include/repositories/ReservationRepository.h"
 #include "../../include/repositories/TableRepository.h"
+#include "../../include/repositories/PaymentRepository.h"
 #include "../../include/models/Reservation.h"
+#include "../../include/models/Payment.h"
 #include "../../include/enums/ReservationStatus.h"
+#include "../../include/enums/PaymentStatus.h"
 #include <QHeaderView>
 #include <QDateTime>
 
 ReservationView::ReservationView(QWidget *parent)
-    : QWidget(parent), currentReservationId(-1) {
+    : QWidget(parent), currentReservationId(-1), filterByDate(false) {
     setupUI();
     loadReservations();
 }
@@ -123,21 +126,40 @@ void ReservationView::setupUI() {
     
     // Table Group
     tableGroup = new QGroupBox("Reservations", this);
-    QVBoxLayout* tableLayout = new QVBoxLayout();
+    QVBoxLayout* reservationsLayout = new QVBoxLayout();
+    
+    QHBoxLayout* filterLayout = new QHBoxLayout();
+    filterLayout->addWidget(new QLabel("Filter by Date:", this));
+    filterDateEdit = new QDateEdit(this);
+    filterDateEdit->setDate(QDate::currentDate());
+    filterDateEdit->setCalendarPopup(true);
+    filterLayout->addWidget(filterDateEdit);
+    
+    QPushButton* filterBtn = new QPushButton("Filter", this);
+    connect(filterBtn, &QPushButton::clicked, this, &ReservationView::onRefreshClicked);
+    filterLayout->addWidget(filterBtn);
+    
+    QPushButton* clearFilterBtn = new QPushButton("Show All", this);
+    connect(clearFilterBtn, &QPushButton::clicked, this, &ReservationView::onClearFilterClicked);
+    filterLayout->addWidget(clearFilterBtn);
+    
+    filterLayout->addStretch();
     
     refreshBtn = new QPushButton("Refresh", this);
     connect(refreshBtn, &QPushButton::clicked, this, &ReservationView::onRefreshClicked);
+    filterLayout->addWidget(refreshBtn);
+    
+    reservationsLayout->addLayout(filterLayout);
     
     reservationsTable = new QTableWidget(this);
-    reservationsTable->setColumnCount(8);
-    reservationsTable->setHorizontalHeaderLabels(QStringList() << "ID" << "Customer" << "Table" << "Date" << "Time" << "Guests" << "Status" << "Requests");
+    reservationsTable->setColumnCount(9);
+    reservationsTable->setHorizontalHeaderLabels(QStringList() << "ID" << "Customer" << "Table" << "Date" << "Time" << "Guests" << "Status" << "Payment" << "Requests");
     reservationsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     reservationsTable->horizontalHeader()->setStretchLastSection(true);
     connect(reservationsTable, &QTableWidget::itemSelectionChanged, this, &ReservationView::onReservationSelectionChanged);
     
-    tableLayout->addWidget(refreshBtn);
-    tableLayout->addWidget(reservationsTable);
-    tableGroup->setLayout(tableLayout);
+    reservationsLayout->addWidget(reservationsTable);
+    tableGroup->setLayout(reservationsLayout);
     mainLayout->addWidget(tableGroup);
     
     // Load tables
@@ -152,7 +174,14 @@ void ReservationView::setupUI() {
 
 void ReservationView::loadReservations() {
     ReservationRepository reservationRepo;
-    auto reservations = reservationRepo.getAll();
+    std::vector<Reservation*> reservations;
+    
+    if (filterByDate) {
+        QString dateStr = filterDateEdit->date().toString("yyyy-MM-dd");
+        reservations = reservationRepo.getByDate(dateStr.toStdString());
+    } else {
+        reservations = reservationRepo.getAll();
+    }
     
     reservationsTable->setRowCount(0);
     
@@ -176,7 +205,24 @@ void ReservationView::loadReservations() {
             case ReservationStatus::NO_SHOW: statusStr = "NO_SHOW"; break;
         }
         reservationsTable->setItem(row, 6, new QTableWidgetItem(statusStr));
-        reservationsTable->setItem(row, 7, new QTableWidgetItem(reservation->getSpecialRequests().c_str()));
+        
+        // Get payment info
+        QString paymentStr = "N/A";
+        if (reservation->getOrderId() > 0) {
+            PaymentRepository paymentRepo;
+            auto payments = paymentRepo.getByOrderId(reservation->getOrderId());
+            if (!payments.empty()) {
+                Payment* payment = payments[0];
+                paymentStr = QString("$%1 - %2").arg(payment->getAmount(), 0, 'f', 2)
+                                                 .arg(payment->getStatus() == PaymentStatus::COMPLETED ? "Paid" : "Pending");
+                delete payment;
+            }
+            for (size_t i = 1; i < payments.size(); ++i) {
+                delete payments[i];
+            }
+        }
+        reservationsTable->setItem(row, 7, new QTableWidgetItem(paymentStr));
+        reservationsTable->setItem(row, 8, new QTableWidgetItem(reservation->getSpecialRequests().c_str()));
         
         reservationsTable->item(row, 0)->setData(Qt::UserRole, reservation->getId());
         
@@ -282,6 +328,12 @@ void ReservationView::onReservationSelectionChanged() {
 }
 
 void ReservationView::onRefreshClicked() {
+    filterByDate = true;
+    loadReservations();
+}
+
+void ReservationView::onClearFilterClicked() {
+    filterByDate = false;
     loadReservations();
 }
 

@@ -23,6 +23,7 @@ private:
     static bool createMenuItemIngredientsTable();
     static bool createTablesTable();
     static bool createReservationsTable();
+    static bool createReservationMenuItemsTable();
     static bool createOrdersTable();
     static bool createOrderItemsTable();
     static bool createOrderQueueTable();

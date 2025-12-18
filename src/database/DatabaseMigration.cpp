@@ -24,6 +24,7 @@ bool DatabaseMigration::createTables() {
     success &= createMenuItemIngredientsTable();
     success &= createTablesTable();
     success &= createReservationsTable();
+    success &= createReservationMenuItemsTable();
     success &= createOrdersTable();
     success &= createOrderItemsTable();
     success &= createOrderQueueTable();
@@ -232,9 +233,33 @@ bool DatabaseMigration::createReservationsTable() {
             number_of_guests INTEGER NOT NULL,
             status TEXT NOT NULL DEFAULT 'PENDING',
             special_requests TEXT,
+            order_id INTEGER,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (table_id) REFERENCES tables(id)
+            FOREIGN KEY (table_id) REFERENCES tables(id),
+            FOREIGN KEY (order_id) REFERENCES orders(id)
+        );
+    )";
+    bool result = DatabaseConnection::getInstance().executeQuery(query);
+    
+    // Add order_id column if it doesn't exist (for existing databases)
+    std::string alterQuery = "ALTER TABLE reservations ADD COLUMN order_id INTEGER REFERENCES orders(id);";
+    DatabaseConnection::getInstance().executeQuery(alterQuery); // Ignore error if column exists
+    
+    return result;
+}
+
+bool DatabaseMigration::createReservationMenuItemsTable() {
+    std::string query = R"(
+        CREATE TABLE IF NOT EXISTS reservation_menu_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reservation_id INTEGER NOT NULL,
+            menu_item_id INTEGER NOT NULL,
+            quantity INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+            FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
+            UNIQUE(reservation_id, menu_item_id)
         );
     )";
     return DatabaseConnection::getInstance().executeQuery(query);
@@ -346,7 +371,7 @@ bool DatabaseMigration::dropTables() {
     // Drop in reverse order to handle foreign keys
     std::vector<std::string> tables = {
         "statistics", "events", "payments", "order_queue", "order_items",
-        "orders", "reservations", "tables", "menu_item_ingredients",
+        "orders", "reservation_menu_items", "reservations", "tables", "menu_item_ingredients",
         "ingredients", "menu_items", "chefs", "admin_action_logs",
         "role_access_scopes", "access_scopes", "role_permissions",
         "permissions", "roles", "users"

@@ -2,10 +2,9 @@
 #define ORDERTYPE_H
 
 enum class OrderType {
-    DINE_IN,
-    TAKEAWAY,
-    DELIVERY
+    NORMAL,     // Standard orders
+    VEGAN,      // Vegan orders - prepared by vegan chefs only
+    VIP         // High-priority orders - always served first
 };
 
 #endif // ORDERTYPE_H
-

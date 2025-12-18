@@ -16,6 +16,7 @@ private:
     int numberOfGuests;
     ReservationStatus status;
     std::string specialRequests;
+    int orderId;
     std::string createdAt;
     std::string updatedAt;
 
@@ -35,6 +36,7 @@ public:
     int getNumberOfGuests() const;
     ReservationStatus getStatus() const;
     std::string getSpecialRequests() const;
+    int getOrderId() const;
     std::string getCreatedAt() const;
     std::string getUpdatedAt() const;
     
@@ -48,6 +50,7 @@ public:
     void setNumberOfGuests(int numberOfGuests);
     void setStatus(ReservationStatus status);
     void setSpecialRequests(const std::string& specialRequests);
+    void setOrderId(int orderId);
     void setCreatedAt(const std::string& createdAt);
     void setUpdatedAt(const std::string& updatedAt);
 };

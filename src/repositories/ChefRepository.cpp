@@ -28,11 +28,10 @@ Chef* ChefRepository::getById(int id) {
         chef->setUserId(sqlite3_column_int(stmt, 1));
         
         std::string typeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-        ChefType type = ChefType::LINE_CHEF;
-        if (typeStr == "HEAD_CHEF") type = ChefType::HEAD_CHEF;
-        else if (typeStr == "SOUS_CHEF") type = ChefType::SOUS_CHEF;
-        else if (typeStr == "PASTRY_CHEF") type = ChefType::PASTRY_CHEF;
-        else if (typeStr == "GRILL_CHEF") type = ChefType::GRILL_CHEF;
+        ChefType type = ChefType::NORMAL_CHEF;
+        if (typeStr == "VIP_CHEF") type = ChefType::VIP_CHEF;
+        else if (typeStr == "VEGAN_CHEF") type = ChefType::VEGAN_CHEF;
+        else if (typeStr == "NORMAL_CHEF") type = ChefType::NORMAL_CHEF;
         chef->setChefType(type);
         
         std::string statusStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
@@ -101,11 +100,10 @@ std::vector<Chef*> ChefRepository::getAll() {
         chef->setUserId(sqlite3_column_int(stmt, 1));
         
         std::string typeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-        ChefType type = ChefType::LINE_CHEF;
-        if (typeStr == "HEAD_CHEF") type = ChefType::HEAD_CHEF;
-        else if (typeStr == "SOUS_CHEF") type = ChefType::SOUS_CHEF;
-        else if (typeStr == "PASTRY_CHEF") type = ChefType::PASTRY_CHEF;
-        else if (typeStr == "GRILL_CHEF") type = ChefType::GRILL_CHEF;
+        ChefType type = ChefType::NORMAL_CHEF;
+        if (typeStr == "VIP_CHEF") type = ChefType::VIP_CHEF;
+        else if (typeStr == "VEGAN_CHEF") type = ChefType::VEGAN_CHEF;
+        else if (typeStr == "NORMAL_CHEF") type = ChefType::NORMAL_CHEF;
         chef->setChefType(type);
         
         std::string statusStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
@@ -138,6 +136,7 @@ std::vector<Chef*> ChefRepository::getByStatus(ChefStatus status) {
         case ChefStatus::BUSY: statusStr = "BUSY"; break;
         case ChefStatus::ON_BREAK: statusStr = "ON_BREAK"; break;
         case ChefStatus::OFF_DUTY: statusStr = "OFF_DUTY"; break;
+        default: statusStr = "AVAILABLE"; break;
     }
     
     std::ostringstream query;
@@ -157,11 +156,10 @@ std::vector<Chef*> ChefRepository::getByStatus(ChefStatus status) {
         chef->setUserId(sqlite3_column_int(stmt, 1));
         
         std::string typeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-        ChefType type = ChefType::LINE_CHEF;
-        if (typeStr == "HEAD_CHEF") type = ChefType::HEAD_CHEF;
-        else if (typeStr == "SOUS_CHEF") type = ChefType::SOUS_CHEF;
-        else if (typeStr == "PASTRY_CHEF") type = ChefType::PASTRY_CHEF;
-        else if (typeStr == "GRILL_CHEF") type = ChefType::GRILL_CHEF;
+        ChefType type = ChefType::NORMAL_CHEF;
+        if (typeStr == "VIP_CHEF") type = ChefType::VIP_CHEF;
+        else if (typeStr == "VEGAN_CHEF") type = ChefType::VEGAN_CHEF;
+        else if (typeStr == "NORMAL_CHEF") type = ChefType::NORMAL_CHEF;
         chef->setChefType(type);
         
         chef->setStatus(status);
@@ -189,12 +187,11 @@ bool ChefRepository::insert(Chef* chef) {
         return false;
     }
     
-    std::string typeStr = "LINE_CHEF";
+    std::string typeStr = "NORMAL_CHEF";
     switch (chef->getChefType()) {
-        case ChefType::HEAD_CHEF: typeStr = "HEAD_CHEF"; break;
-        case ChefType::SOUS_CHEF: typeStr = "SOUS_CHEF"; break;
-        case ChefType::PASTRY_CHEF: typeStr = "PASTRY_CHEF"; break;
-        case ChefType::GRILL_CHEF: typeStr = "GRILL_CHEF"; break;
+        case ChefType::VIP_CHEF: typeStr = "VIP_CHEF"; break;
+        case ChefType::VEGAN_CHEF: typeStr = "VEGAN_CHEF"; break;
+        case ChefType::NORMAL_CHEF: typeStr = "NORMAL_CHEF"; break;
     }
     
     std::string statusStr = "AVAILABLE";
@@ -202,6 +199,7 @@ bool ChefRepository::insert(Chef* chef) {
         case ChefStatus::BUSY: statusStr = "BUSY"; break;
         case ChefStatus::ON_BREAK: statusStr = "ON_BREAK"; break;
         case ChefStatus::OFF_DUTY: statusStr = "OFF_DUTY"; break;
+        default: statusStr = "AVAILABLE"; break;
     }
     
     std::ostringstream query;
@@ -229,12 +227,11 @@ bool ChefRepository::update(Chef* chef) {
         return false;
     }
     
-    std::string typeStr = "LINE_CHEF";
+    std::string typeStr = "NORMAL_CHEF";
     switch (chef->getChefType()) {
-        case ChefType::HEAD_CHEF: typeStr = "HEAD_CHEF"; break;
-        case ChefType::SOUS_CHEF: typeStr = "SOUS_CHEF"; break;
-        case ChefType::PASTRY_CHEF: typeStr = "PASTRY_CHEF"; break;
-        case ChefType::GRILL_CHEF: typeStr = "GRILL_CHEF"; break;
+        case ChefType::VIP_CHEF: typeStr = "VIP_CHEF"; break;
+        case ChefType::VEGAN_CHEF: typeStr = "VEGAN_CHEF"; break;
+        case ChefType::NORMAL_CHEF: typeStr = "NORMAL_CHEF"; break;
     }
     
     std::string statusStr = "AVAILABLE";
@@ -242,6 +239,7 @@ bool ChefRepository::update(Chef* chef) {
         case ChefStatus::BUSY: statusStr = "BUSY"; break;
         case ChefStatus::ON_BREAK: statusStr = "ON_BREAK"; break;
         case ChefStatus::OFF_DUTY: statusStr = "OFF_DUTY"; break;
+        default: statusStr = "AVAILABLE"; break;
     }
     
     std::ostringstream query;
@@ -265,4 +263,3 @@ bool ChefRepository::deleteById(int id) {
     query << "DELETE FROM chefs WHERE id = " << id << ";";
     return DatabaseConnection::getInstance().executeQuery(query.str());
 }
-

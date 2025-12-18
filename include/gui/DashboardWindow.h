@@ -17,8 +17,19 @@ public:
     explicit DashboardWindow(QWidget *parent = nullptr);
     ~DashboardWindow();
 
+signals:
+    void openOrderView();
+    void openReservationView();
+    void openMenuView();
+    void openOrderQueueView();
+    void openTableView();
+    void openPaymentView();
+
 private slots:
     void onRefreshClicked();
+    void onNewOrderClicked();
+    void onNewReservationClicked();
+    void onViewMenuClicked();
     void updateStatistics();
 
 private:

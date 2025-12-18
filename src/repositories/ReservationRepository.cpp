@@ -23,7 +23,7 @@ Reservation* ReservationRepository::getById(int id) {
     
     std::ostringstream query;
     query << "SELECT id, customer_name, customer_phone, customer_email, table_id, "
-          << "reservation_date, reservation_time, number_of_guests, status, special_requests, "
+          << "reservation_date, reservation_time, number_of_guests, status, special_requests, order_id, "
           << "created_at, updated_at FROM reservations WHERE id = " << id << ";";
     
     sqlite3_stmt* stmt;
@@ -55,8 +55,9 @@ Reservation* ReservationRepository::getById(int id) {
         reservation->setStatus(status);
         
         reservation->setSpecialRequests(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9)));
-        reservation->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 10)));
-        reservation->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 11)));
+        reservation->setOrderId(sqlite3_column_int(stmt, 10));
+        reservation->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 11)));
+        reservation->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 12)));
     }
     
     sqlite3_finalize(stmt);
@@ -80,7 +81,7 @@ std::vector<Reservation*> ReservationRepository::getAll() {
     }
     
     std::string query = "SELECT id, customer_name, customer_phone, customer_email, table_id, "
-                       "reservation_date, reservation_time, number_of_guests, status, special_requests, "
+                       "reservation_date, reservation_time, number_of_guests, status, special_requests, order_id, "
                        "created_at, updated_at FROM reservations;";
     
     sqlite3_stmt* stmt;
@@ -140,7 +141,7 @@ std::vector<Reservation*> ReservationRepository::getByTableId(int tableId) {
     
     std::ostringstream query;
     query << "SELECT id, customer_name, customer_phone, customer_email, table_id, "
-          << "reservation_date, reservation_time, number_of_guests, status, special_requests, "
+          << "reservation_date, reservation_time, number_of_guests, status, special_requests, order_id, "
           << "created_at, updated_at FROM reservations WHERE table_id = " << tableId << ";";
     
     sqlite3_stmt* stmt;
@@ -200,7 +201,7 @@ std::vector<Reservation*> ReservationRepository::getByDate(const std::string& da
     
     std::ostringstream query;
     query << "SELECT id, customer_name, customer_phone, customer_email, table_id, "
-          << "reservation_date, reservation_time, number_of_guests, status, special_requests, "
+          << "reservation_date, reservation_time, number_of_guests, status, special_requests, order_id, "
           << "created_at, updated_at FROM reservations WHERE reservation_date = '" << date << "';";
     
     sqlite3_stmt* stmt;
@@ -269,7 +270,7 @@ std::vector<Reservation*> ReservationRepository::getByStatus(ReservationStatus s
     
     std::ostringstream query;
     query << "SELECT id, customer_name, customer_phone, customer_email, table_id, "
-          << "reservation_date, reservation_time, number_of_guests, status, special_requests, "
+          << "reservation_date, reservation_time, number_of_guests, status, special_requests, order_id, "
           << "created_at, updated_at FROM reservations WHERE status = '" << statusStr << "';";
     
     sqlite3_stmt* stmt;
@@ -291,8 +292,9 @@ std::vector<Reservation*> ReservationRepository::getByStatus(ReservationStatus s
         reservation->setNumberOfGuests(sqlite3_column_int(stmt, 7));
         reservation->setStatus(status);
         reservation->setSpecialRequests(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9)));
-        reservation->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 10)));
-        reservation->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 11)));
+        reservation->setOrderId(sqlite3_column_int(stmt, 10));
+        reservation->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 11)));
+        reservation->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 12)));
         reservations.push_back(reservation);
     }
     

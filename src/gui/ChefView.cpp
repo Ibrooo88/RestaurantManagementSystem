@@ -34,11 +34,9 @@ void ChefView::setupUI() {
     QHBoxLayout* typeLayout = new QHBoxLayout();
     typeLayout->addWidget(new QLabel("Chef Type:", this));
     chefTypeCombo = new QComboBox(this);
-    chefTypeCombo->addItem("Head Chef", static_cast<int>(ChefType::HEAD_CHEF));
-    chefTypeCombo->addItem("Sous Chef", static_cast<int>(ChefType::SOUS_CHEF));
-    chefTypeCombo->addItem("Line Chef", static_cast<int>(ChefType::LINE_CHEF));
-    chefTypeCombo->addItem("Pastry Chef", static_cast<int>(ChefType::PASTRY_CHEF));
-    chefTypeCombo->addItem("Grill Chef", static_cast<int>(ChefType::GRILL_CHEF));
+    chefTypeCombo->addItem("Normal Chef", static_cast<int>(ChefType::NORMAL_CHEF));
+    chefTypeCombo->addItem("Vegan Chef", static_cast<int>(ChefType::VEGAN_CHEF));
+    chefTypeCombo->addItem("VIP Chef", static_cast<int>(ChefType::VIP_CHEF));
     typeLayout->addWidget(chefTypeCombo);
     formLayout->addLayout(typeLayout);
     
@@ -135,12 +133,11 @@ void ChefView::loadChefs() {
         chefsTable->setItem(row, 0, new QTableWidgetItem(QString::number(chef->getId())));
         chefsTable->setItem(row, 1, new QTableWidgetItem(userName));
         
-        QString typeStr = "Line Chef";
+        QString typeStr = "Normal Chef";
         switch (chef->getChefType()) {
-            case ChefType::HEAD_CHEF: typeStr = "Head Chef"; break;
-            case ChefType::SOUS_CHEF: typeStr = "Sous Chef"; break;
-            case ChefType::PASTRY_CHEF: typeStr = "Pastry Chef"; break;
-            case ChefType::GRILL_CHEF: typeStr = "Grill Chef"; break;
+            case ChefType::NORMAL_CHEF: typeStr = "Normal Chef"; break;
+            case ChefType::VEGAN_CHEF: typeStr = "Vegan Chef"; break;
+            case ChefType::VIP_CHEF: typeStr = "VIP Chef"; break;
         }
         chefsTable->setItem(row, 2, new QTableWidgetItem(typeStr));
         

@@ -42,6 +42,12 @@ set(SOURCES
     src/models/Reservation.cpp
     src/models/Payment.cpp
     src/models/AdminActionLog.cpp
+    src/models/Statistics.cpp
+    src/models/OrderQueue.cpp
+    src/models/Permission.cpp
+    src/models/Event.cpp
+    src/models/AccessScope.cpp
+    src/models/Ingredient.cpp
     
     # Repositories
     src/repositories/UserRepository.cpp
@@ -53,6 +59,13 @@ set(SOURCES
     src/repositories/ReservationRepository.cpp
     src/repositories/PaymentRepository.cpp
     src/repositories/AdminActionLogRepository.cpp
+    src/repositories/RoleRepository.cpp
+    src/repositories/StatisticsRepository.cpp
+    src/repositories/OrderQueueRepository.cpp
+    src/repositories/PermissionRepository.cpp
+    src/repositories/EventRepository.cpp
+    src/repositories/AccessScopeRepository.cpp
+    src/repositories/IngredientRepository.cpp
     
     # Services
     src/services/AuthService.cpp
@@ -78,6 +91,15 @@ set(SOURCES
     # Database
     src/database/DatabaseConnection.cpp
     src/database/DatabaseMigration.cpp
+    src/database/DatabaseSeeder.cpp
+    src/database/QueryBuilder.cpp
+    
+    # Simulation
+    src/simulation/Event.cpp
+    src/simulation/ArrivalEvent.cpp
+    src/simulation/CancelEvent.cpp
+    src/simulation/PromoteEvent.cpp
+    src/simulation/SimulationEngine.cpp
     
     # Utils
     src/utils/Logger.cpp
@@ -85,6 +107,8 @@ set(SOURCES
     src/utils/PriceCalculator.cpp
     src/utils/PriorityCalculator.cpp
     src/utils/SimulationMode.cpp
+    src/utils/RandomUtils.cpp
+    src/utils/JsonSerializer.cpp
     
     # GUI
     src/gui/LoginWindow.cpp

@@ -37,15 +37,21 @@ MenuItem* MenuItemRepository::getById(int id) {
     if (sqlite3_step(stmt) == SQLITE_ROW) {
         item = new MenuItem();
         item->setId(sqlite3_column_int(stmt, 0));
-        item->setName(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-        item->setDescription(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        const char* name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        item->setName(name ? name : "");
+        const char* desc = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        item->setDescription(desc ? desc : "");
         item->setPrice(sqlite3_column_double(stmt, 3));
-        item->setCategory(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+        const char* category = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+        item->setCategory(category ? category : "");
         item->setPreparationTime(sqlite3_column_int(stmt, 5));
         item->setIsAvailable(sqlite3_column_int(stmt, 6) == 1);
-        item->setImagePath(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
-        item->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
-        item->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9)));
+        const char* imagePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
+        item->setImagePath(imagePath ? imagePath : "");
+        const char* createdAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8));
+        item->setCreatedAt(createdAt ? createdAt : "");
+        const char* updatedAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+        item->setUpdatedAt(updatedAt ? updatedAt : "");
     }
     
     sqlite3_finalize(stmt);
@@ -81,15 +87,21 @@ std::vector<MenuItem*> MenuItemRepository::getAll() {
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         MenuItem* item = new MenuItem();
         item->setId(sqlite3_column_int(stmt, 0));
-        item->setName(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-        item->setDescription(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        const char* name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        item->setName(name ? name : "");
+        const char* desc = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        item->setDescription(desc ? desc : "");
         item->setPrice(sqlite3_column_double(stmt, 3));
-        item->setCategory(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+        const char* category = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+        item->setCategory(category ? category : "");
         item->setPreparationTime(sqlite3_column_int(stmt, 5));
         item->setIsAvailable(sqlite3_column_int(stmt, 6) == 1);
-        item->setImagePath(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
-        item->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
-        item->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9)));
+        const char* imagePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
+        item->setImagePath(imagePath ? imagePath : "");
+        const char* createdAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8));
+        item->setCreatedAt(createdAt ? createdAt : "");
+        const char* updatedAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+        item->setUpdatedAt(updatedAt ? updatedAt : "");
         items.push_back(item);
     }
     
@@ -130,15 +142,21 @@ std::vector<MenuItem*> MenuItemRepository::getByCategory(const std::string& cate
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         MenuItem* item = new MenuItem();
         item->setId(sqlite3_column_int(stmt, 0));
-        item->setName(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)));
-        item->setDescription(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)));
+        const char* name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        item->setName(name ? name : "");
+        const char* desc = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        item->setDescription(desc ? desc : "");
         item->setPrice(sqlite3_column_double(stmt, 3));
-        item->setCategory(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4)));
+        const char* category = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+        item->setCategory(category ? category : "");
         item->setPreparationTime(sqlite3_column_int(stmt, 5));
         item->setIsAvailable(sqlite3_column_int(stmt, 6) == 1);
-        item->setImagePath(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
-        item->setCreatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
-        item->setUpdatedAt(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9)));
+        const char* imagePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7));
+        item->setImagePath(imagePath ? imagePath : "");
+        const char* createdAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8));
+        item->setCreatedAt(createdAt ? createdAt : "");
+        const char* updatedAt = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+        item->setUpdatedAt(updatedAt ? updatedAt : "");
         items.push_back(item);
     }
     

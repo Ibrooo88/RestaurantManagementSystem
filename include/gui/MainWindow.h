@@ -34,10 +34,11 @@ private:
     void setupUI();
     void setupMenuBar();
     void setupStatusBar();
+    int findTabIndex(const QString& tabText);
     
     int currentUserId;
     QTabWidget* tabWidget;
-    QMenuBar* menuBar;
+    QMenuBar* mainMenuBar;
     QMenu* fileMenu;
     QMenu* viewMenu;
     QMenu* helpMenu;

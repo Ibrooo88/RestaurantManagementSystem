@@ -81,14 +81,29 @@ void PaymentView::setupUI() {
 
 void PaymentView::loadOrders() {
     OrderRepository orderRepo;
+    PaymentRepository paymentRepo;
     auto orders = orderRepo.getAll();
     
     orderCombo->clear();
     orderCombo->addItem("Select Order", -1);
     
     for (auto* order : orders) {
-        QString displayText = QString("Order #%1 - $%2").arg(order->getOrderNumber().c_str()).arg(order->getTotalAmount(), 0, 'f', 2);
-        orderCombo->addItem(displayText, order->getId());
+        // Check if order has completed payment
+        auto payments = paymentRepo.getByOrderId(order->getId());
+        bool hasCompletedPayment = false;
+        for (auto* payment : payments) {
+            if (payment->getStatus() == PaymentStatus::COMPLETED) {
+                hasCompletedPayment = true;
+            }
+            delete payment;
+        }
+        
+        // Only show orders without completed payment
+        if (!hasCompletedPayment) {
+            QString displayText = QString("Order #%1 - $%2").arg(order->getOrderNumber().c_str()).arg(order->getTotalAmount(), 0, 'f', 2);
+            orderCombo->addItem(displayText, order->getId());
+        }
+        
         delete order;
     }
 }

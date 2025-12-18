@@ -29,6 +29,7 @@ private slots:
     void onDeleteReservationClicked();
     void onReservationSelectionChanged();
     void onRefreshClicked();
+    void onClearFilterClicked();
 
 private:
     void setupUI();
@@ -59,6 +60,8 @@ private:
     QGroupBox* tableGroup;
     QTableWidget* reservationsTable;
     QPushButton* refreshBtn;
+    QDateEdit* filterDateEdit;
+    bool filterByDate;
     
     int currentReservationId;
 };

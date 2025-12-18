@@ -1,9 +1,16 @@
 #include "../../include/gui/DashboardWindow.h"
 #include "../../include/repositories/OrderRepository.h"
 #include "../../include/repositories/TableRepository.h"
+#include "../../include/repositories/PaymentRepository.h"
 #include "../../include/enums/OrderStatus.h"
 #include "../../include/enums/TableStatus.h"
+#include "../../include/enums/PaymentStatus.h"
+#include "../../include/utils/TimeUtils.h"
 #include <QHeaderView>
+#include <QDateTime>
+#include <QMessageBox>
+#include <QBrush>
+#include <QColor>
 
 DashboardWindow::DashboardWindow(QWidget *parent)
     : QWidget(parent) {
@@ -55,16 +62,34 @@ void DashboardWindow::setupUI() {
     
     newOrderBtn = new QPushButton("New Order", this);
     newOrderBtn->setStyleSheet("background-color: #4CAF50; color: white; padding: 10px; font-size: 14px;");
+    connect(newOrderBtn, &QPushButton::clicked, this, &DashboardWindow::onNewOrderClicked);
     
     newReservationBtn = new QPushButton("New Reservation", this);
     newReservationBtn->setStyleSheet("background-color: #2196F3; color: white; padding: 10px; font-size: 14px;");
+    connect(newReservationBtn, &QPushButton::clicked, this, &DashboardWindow::onNewReservationClicked);
     
     viewMenuBtn = new QPushButton("View Menu", this);
     viewMenuBtn->setStyleSheet("background-color: #FF9800; color: white; padding: 10px; font-size: 14px;");
+    connect(viewMenuBtn, &QPushButton::clicked, this, &DashboardWindow::onViewMenuClicked);
+    
+    QPushButton* orderQueueBtn = new QPushButton("Order Queue", this);
+    orderQueueBtn->setStyleSheet("background-color: #9C27B0; color: white; padding: 10px; font-size: 14px;");
+    connect(orderQueueBtn, &QPushButton::clicked, this, &DashboardWindow::openOrderQueueView);
+    
+    QPushButton* tablesBtn = new QPushButton("Tables", this);
+    tablesBtn->setStyleSheet("background-color: #607D8B; color: white; padding: 10px; font-size: 14px;");
+    connect(tablesBtn, &QPushButton::clicked, this, &DashboardWindow::openTableView);
+    
+    QPushButton* paymentsBtn = new QPushButton("Payments", this);
+    paymentsBtn->setStyleSheet("background-color: #795548; color: white; padding: 10px; font-size: 14px;");
+    connect(paymentsBtn, &QPushButton::clicked, this, &DashboardWindow::openPaymentView);
     
     actionsLayout->addWidget(newOrderBtn);
     actionsLayout->addWidget(newReservationBtn);
     actionsLayout->addWidget(viewMenuBtn);
+    actionsLayout->addWidget(orderQueueBtn);
+    actionsLayout->addWidget(tablesBtn);
+    actionsLayout->addWidget(paymentsBtn);
     actionsLayout->addStretch();
     
     quickActionsGroup->setLayout(actionsLayout);
@@ -78,8 +103,8 @@ void DashboardWindow::setupUI() {
     connect(refreshBtn, &QPushButton::clicked, this, &DashboardWindow::onRefreshClicked);
     
     recentOrdersTable = new QTableWidget(this);
-    recentOrdersTable->setColumnCount(5);
-    recentOrdersTable->setHorizontalHeaderLabels(QStringList() << "Order #" << "Table" << "Customer" << "Total" << "Status");
+    recentOrdersTable->setColumnCount(6);
+    recentOrdersTable->setHorizontalHeaderLabels(QStringList() << "Order #" << "Table" << "Customer" << "Total" << "Status" << "Payment");
     recentOrdersTable->horizontalHeader()->setStretchLastSection(true);
     recentOrdersTable->setMaximumHeight(300);
     
@@ -107,7 +132,6 @@ void DashboardWindow::loadStatistics() {
         if (order->getStatus() == OrderStatus::PENDING || order->getStatus() == OrderStatus::IN_PROGRESS) {
             pendingOrders++;
         }
-        delete order;
     }
     
     for (auto* table : allTables) {
@@ -123,8 +147,9 @@ void DashboardWindow::loadStatistics() {
     pendingOrdersValue->setText(QString::number(pendingOrders));
     activeTablesValue->setText(QString::number(activeTables));
     
-    // Load recent orders (last 10)
+    // Load recent orders (last 10) - do this BEFORE deleting orders
     recentOrdersTable->setRowCount(0);
+    PaymentRepository paymentRepo;
     int count = 0;
     for (int i = allOrders.size() - 1; i >= 0 && count < 10; --i) {
         Order* order = allOrders[i];
@@ -145,12 +170,47 @@ void DashboardWindow::loadStatistics() {
             case OrderStatus::CANCELLED: statusStr = "CANCELLED"; break;
         }
         recentOrdersTable->setItem(row, 4, new QTableWidgetItem(statusStr));
+        
+        // Check payment status
+        auto payments = paymentRepo.getByOrderId(order->getId());
+        QString paymentStr = "Not Paid";
+        bool hasCompletedPayment = false;
+        for (auto* payment : payments) {
+            if (payment->getStatus() == PaymentStatus::COMPLETED) {
+                paymentStr = "Paid";
+                hasCompletedPayment = true;
+            }
+            delete payment;
+        }
+        QTableWidgetItem* paymentItem = new QTableWidgetItem(paymentStr);
+        if (hasCompletedPayment) {
+            paymentItem->setForeground(QBrush(QColor(0, 150, 0))); // Green color
+        }
+        recentOrdersTable->setItem(row, 5, paymentItem);
+        
         count++;
+    }
+    
+    // Clean up orders AFTER using them
+    for (auto* order : allOrders) {
+        delete order;
     }
 }
 
 void DashboardWindow::onRefreshClicked() {
     loadStatistics();
+}
+
+void DashboardWindow::onNewOrderClicked() {
+    emit openOrderView();
+}
+
+void DashboardWindow::onNewReservationClicked() {
+    emit openReservationView();
+}
+
+void DashboardWindow::onViewMenuClicked() {
+    emit openMenuView();
 }
 
 void DashboardWindow::updateStatistics() {

@@ -47,8 +47,8 @@ Order* OrderRepository::getById(int id) {
         order->setTableId(sqlite3_column_int(stmt, 2));
         
         std::string orderTypeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-        OrderType orderType = (orderTypeStr == "DINE_IN") ? OrderType::DINE_IN :
-                             (orderTypeStr == "TAKEAWAY") ? OrderType::TAKEAWAY : OrderType::DELIVERY;
+        OrderType orderType = (orderTypeStr == "VIP") ? OrderType::VIP :
+                             (orderTypeStr == "VEGAN") ? OrderType::VEGAN : OrderType::NORMAL;
         order->setOrderType(orderType);
         
         std::string statusStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
@@ -146,8 +146,8 @@ std::vector<Order*> OrderRepository::getAll() {
         order->setTableId(sqlite3_column_int(stmt, 2));
         
         std::string orderTypeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-        OrderType orderType = (orderTypeStr == "DINE_IN") ? OrderType::DINE_IN :
-                             (orderTypeStr == "TAKEAWAY") ? OrderType::TAKEAWAY : OrderType::DELIVERY;
+        OrderType orderType = (orderTypeStr == "VIP") ? OrderType::VIP :
+                             (orderTypeStr == "VEGAN") ? OrderType::VEGAN : OrderType::NORMAL;
         order->setOrderType(orderType);
         
         std::string statusStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
@@ -216,8 +216,8 @@ std::vector<Order*> OrderRepository::getByStatus(OrderStatus status) {
         order->setTableId(sqlite3_column_int(stmt, 2));
         
         std::string orderTypeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-        OrderType orderType = (orderTypeStr == "DINE_IN") ? OrderType::DINE_IN :
-                             (orderTypeStr == "TAKEAWAY") ? OrderType::TAKEAWAY : OrderType::DELIVERY;
+        OrderType orderType = (orderTypeStr == "VIP") ? OrderType::VIP :
+                             (orderTypeStr == "VEGAN") ? OrderType::VEGAN : OrderType::NORMAL;
         order->setOrderType(orderType);
         order->setStatus(status);
         
@@ -271,8 +271,8 @@ std::vector<Order*> OrderRepository::getByTableId(int tableId) {
         order->setTableId(sqlite3_column_int(stmt, 2));
         
         std::string orderTypeStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-        OrderType orderType = (orderTypeStr == "DINE_IN") ? OrderType::DINE_IN :
-                             (orderTypeStr == "TAKEAWAY") ? OrderType::TAKEAWAY : OrderType::DELIVERY;
+        OrderType orderType = (orderTypeStr == "VIP") ? OrderType::VIP :
+                             (orderTypeStr == "VEGAN") ? OrderType::VEGAN : OrderType::NORMAL;
         order->setOrderType(orderType);
         
         std::string statusStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
@@ -317,8 +317,8 @@ bool OrderRepository::insert(Order* order) {
         return false;
     }
     
-    std::string orderTypeStr = (order->getOrderType() == OrderType::DINE_IN) ? "DINE_IN" :
-                              (order->getOrderType() == OrderType::TAKEAWAY) ? "TAKEAWAY" : "DELIVERY";
+    std::string orderTypeStr = (order->getOrderType() == OrderType::VIP) ? "VIP" :
+                              (order->getOrderType() == OrderType::VEGAN) ? "VEGAN" : "NORMAL";
     std::string statusStr = "PENDING";
     if (order->getStatus() == OrderStatus::IN_PROGRESS) statusStr = "IN_PROGRESS";
     else if (order->getStatus() == OrderStatus::READY) statusStr = "READY";
